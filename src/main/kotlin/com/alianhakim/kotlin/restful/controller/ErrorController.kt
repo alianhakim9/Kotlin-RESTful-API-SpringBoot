@@ -1,5 +1,6 @@
 package com.alianhakim.kotlin.restful.controller
 
+import com.alianhakim.kotlin.restful.exception.UnAuthorizedException
 import com.alianhakim.kotlin.restful.model.WebResponse
 import org.hibernate.annotations.NotFound
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
@@ -34,7 +35,16 @@ class ErrorController {
         return WebResponse(
             code = 404,
             status = "NOT FOUND",
-            data = notfoundException.message.toString()
+            data = "not found"
+        )
+    }
+
+    @ExceptionHandler(value = [UnAuthorizedException::class])
+    fun unAuthorizedHandler(unAuthoriedException: UnAuthorizedException): WebResponse<String> {
+        return WebResponse(
+            code = 401,
+            status = "UNAUTHORIZED",
+            data = "Please put your X-API-Key"
         )
     }
 }
