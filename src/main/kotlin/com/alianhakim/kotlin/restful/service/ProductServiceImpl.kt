@@ -3,6 +3,7 @@ package com.alianhakim.kotlin.restful.service
 import com.alianhakim.kotlin.restful.entity.Product
 import com.alianhakim.kotlin.restful.model.CreateProductRequest
 import com.alianhakim.kotlin.restful.model.ProductResponse
+import com.alianhakim.kotlin.restful.model.UpdateProductRequest
 import com.alianhakim.kotlin.restful.repository.ProductRepository
 import com.alianhakim.kotlin.restful.validation.ValidationUtil
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
@@ -31,11 +32,29 @@ class ProductServiceImpl(
     }
 
     override fun get(id: String): ProductResponse {
+        return convertProductToProductResponse(findProductByIdOrThrowException(id))
+    }
+
+    override fun update(id: String, updateProductRequest: UpdateProductRequest): ProductResponse {
+        val product = findProductByIdOrThrowException(id)
+        validationUtil.validate(updateProductRequest)
+        product.apply {
+            name = updateProductRequest.name!!
+            price = updateProductRequest.price!!
+            quantity = updateProductRequest.quantity!!
+            updatedAt = Date()
+        }
+
+        productRepository.save(product)
+        return convertProductToProductResponse(product)
+    }
+
+    private fun findProductByIdOrThrowException(id: String): Product {
         val product = productRepository.findByIdOrNull(id)
         if (product == null) {
             throw NotFoundException()
         } else {
-            return convertProductToProductResponse(product)
+            return product
         }
     }
 

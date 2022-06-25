@@ -2,6 +2,7 @@ package com.alianhakim.kotlin.restful.controller
 
 import com.alianhakim.kotlin.restful.model.CreateProductRequest
 import com.alianhakim.kotlin.restful.model.ProductResponse
+import com.alianhakim.kotlin.restful.model.UpdateProductRequest
 import com.alianhakim.kotlin.restful.model.WebResponse
 import com.alianhakim.kotlin.restful.service.ProductService
 import org.springframework.web.bind.annotation.*
@@ -11,8 +12,9 @@ import org.springframework.web.bind.annotation.*
 class ProductController(
     private val productService: ProductService
 ) {
-
-    @PostMapping(produces = ["application/json"], consumes = ["application/json"])
+    @PostMapping(
+        produces = ["application/json"], consumes = ["application/json"]
+    )
     fun createProduct(
         @RequestBody createProductResponse: CreateProductRequest
     ): WebResponse<ProductResponse> {
@@ -20,11 +22,27 @@ class ProductController(
         return convertProductToWebResponse(productResponse)
     }
 
-    @GetMapping("{id}", produces = ["application/json"])
+    @GetMapping(
+        "{id_product}",
+        produces = ["application/json"]
+    )
     fun getProduct(
-        @PathVariable("id") id: String
+        @PathVariable("id_product") id: String
     ): WebResponse<ProductResponse> {
         val product = productService.get(id)
+        return convertProductToWebResponse(product)
+    }
+
+    @PutMapping(
+        "{id_product}",
+        produces = ["application/json"],
+        consumes = ["application/json"]
+    )
+    fun updateProduct(
+        @PathVariable("id_product") id: String,
+        @RequestBody updateProductRequest: UpdateProductRequest
+    ): WebResponse<ProductResponse> {
+        val product = productService.update(id, updateProductRequest)
         return convertProductToWebResponse(product)
     }
 
