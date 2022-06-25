@@ -154,3 +154,6 @@ Response :
   "status": "string"
 }
 ```
+
+# Kotlin RESTful API System Design
+![image](https://user-images.githubusercontent.com/51102459/175752544-b5741cd5-aafd-4614-a278-1ff697717485.png)
