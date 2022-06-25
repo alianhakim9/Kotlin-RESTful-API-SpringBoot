@@ -2,14 +2,17 @@ package com.alianhakim.kotlin.restful.service
 
 import com.alianhakim.kotlin.restful.entity.Product
 import com.alianhakim.kotlin.restful.model.CreateProductRequest
+import com.alianhakim.kotlin.restful.model.ListProductRequest
 import com.alianhakim.kotlin.restful.model.ProductResponse
 import com.alianhakim.kotlin.restful.model.UpdateProductRequest
 import com.alianhakim.kotlin.restful.repository.ProductRepository
 import com.alianhakim.kotlin.restful.validation.ValidationUtil
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.*
+import java.util.stream.Collectors
 
 @Service
 class ProductServiceImpl(
@@ -52,6 +55,12 @@ class ProductServiceImpl(
     override fun delete(id: String) {
         val product = findProductByIdOrThrowException(id)
         productRepository.delete(product)
+    }
+
+    override fun list(listProductRequest: ListProductRequest): List<ProductResponse> {
+        val page = productRepository.findAll(PageRequest.of(listProductRequest.page, listProductRequest.size))
+        val products: List<Product> = page.get().collect(Collectors.toList())
+        return products.map { convertProductToProductResponse(it) }
     }
 
     private fun findProductByIdOrThrowException(id: String): Product {

@@ -1,9 +1,6 @@
 package com.alianhakim.kotlin.restful.controller
 
-import com.alianhakim.kotlin.restful.model.CreateProductRequest
-import com.alianhakim.kotlin.restful.model.ProductResponse
-import com.alianhakim.kotlin.restful.model.UpdateProductRequest
-import com.alianhakim.kotlin.restful.model.WebResponse
+import com.alianhakim.kotlin.restful.model.*
 import com.alianhakim.kotlin.restful.service.ProductService
 import org.springframework.web.bind.annotation.*
 
@@ -58,6 +55,20 @@ class ProductController(
             code = 200,
             status = "OK",
             data = "Product Deleted"
+        )
+    }
+
+    @GetMapping(produces = ["application/json"])
+    fun listProducts(
+        @RequestParam("size", defaultValue = "10") size: Int,
+        @RequestParam("page", defaultValue = "0") page: Int
+    ): WebResponse<List<ProductResponse>> {
+        val request = ListProductRequest(page, size)
+        val response = productService.list(request)
+        return WebResponse(
+            code = 200,
+            status = "OK",
+            data = response
         )
     }
 
