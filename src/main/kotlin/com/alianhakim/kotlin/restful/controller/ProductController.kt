@@ -46,6 +46,21 @@ class ProductController(
         return convertProductToWebResponse(product)
     }
 
+    @DeleteMapping(
+        "{id_product}",
+        produces = ["application/json"]
+    )
+    fun deleteProduct(
+        @PathVariable("id_product") id: String
+    ): WebResponse<String> {
+        productService.delete(id)
+        return WebResponse(
+            code = 200,
+            status = "OK",
+            data = "Product Deleted"
+        )
+    }
+
     private fun convertProductToWebResponse(product: ProductResponse): WebResponse<ProductResponse> {
         return WebResponse(
             code = 200,
